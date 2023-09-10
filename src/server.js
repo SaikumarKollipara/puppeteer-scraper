@@ -5,6 +5,9 @@ import axios from 'axios';
 const app = express();
 const PORT = process.env.PORT || 5001;
 
+app.get('/', (req, res) => {
+  res.status(200).send('Welcome to puppeteer scraper!');
+});
 app.get('/original-image', getOriginalImageFromBing);
 
 app.listen(PORT, () => `Server listening on port: ${PORT}`);

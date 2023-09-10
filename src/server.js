@@ -44,15 +44,7 @@ export async function getOriginalImageFromBing(req, res, next) {
       '.imgContainer img.nofocus',
       (img) => img.src
     );
-    //Image url to b64
-    const response = await axios.get(imgSrc, {
-      responseType: 'arraybuffer',
-    });
-    const imageBuffer = Buffer.from(response.data, 'binary');
-    const base64 = imageBuffer.toString('base64');
-    res
-      .status(200)
-      .json({ success: true, image: `data:image/png;base64,${base64}` });
+    res.status(200).json({ success: true, imgSrc });
   } catch (err) {
     console.log(err);
     res.status(500).json({ success: false, message: 'Web scraper error' });

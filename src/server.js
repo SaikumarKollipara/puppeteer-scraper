@@ -22,15 +22,15 @@ export async function getOriginalImageFromBing(req, res, next) {
       '--single-process',
       '--no-zygote',
     ],
-    headless: 'new',
+    // headless: 'new',
     executablePath:
       process.env.NODE_ENV === 'production'
         ? process.env.PUPPETEER_EXECUTABLE_PATH
         : puppeteer.executablePath(),
   });
   try {
-    console.log('URL is:', BASE_URL + url);
     const page = await browser.newPage();
+    console.log(browser, page);
     await page.goto(BASE_URL + url);
     console.log('Got the page');
     await page.waitForSelector('.imgContainer img.nofocus');

@@ -26,8 +26,10 @@ export async function getOriginalImageFromBing(req, res, next) {
         : puppeteer.executablePath(),
   });
   try {
+    console.log('URL is:', BASE_URL + url);
     const page = await browser.newPage();
     await page.goto(BASE_URL + url);
+    console.log('Got the page');
     await page.waitForSelector('.imgContainer img.nofocus');
     await page.evaluate(() => {
       return new Promise((resolve) => {

@@ -14,8 +14,17 @@ export async function getOriginalImageFromBing(req, res, next) {
     const BASE_URL = 'https://www.bing.com';
     const { url } = req.query;
     const browser = await puppeteer.launch({
+      args: [
+        '--disable-setuid-sandbox',
+        '--no-sandbox',
+        '--single-process',
+        '--no-zygote',
+      ],
       headless: 'new',
-      executablePath: puppeteer.executablePath(),
+      executablePath:
+        process.env.NODE_ENV === 'production'
+          ? process.env.PUPPETEER_EXECUTABLE_PATH
+          : puppeteer.executablePath(),
     });
     const page = await browser.newPage();
     await page.goto(BASE_URL + url);

@@ -10,22 +10,22 @@ app.get('/original-image', getOriginalImageFromBing);
 app.listen(PORT, () => `Server listening on port: ${PORT}`);
 
 export async function getOriginalImageFromBing(req, res, next) {
+  const BASE_URL = 'https://www.bing.com';
+  const { url } = req.query;
+  const browser = await puppeteer.launch({
+    args: [
+      '--disable-setuid-sandbox',
+      '--no-sandbox',
+      '--single-process',
+      '--no-zygote',
+    ],
+    headless: 'new',
+    executablePath:
+      process.env.NODE_ENV === 'production'
+        ? process.env.PUPPETEER_EXECUTABLE_PATH
+        : puppeteer.executablePath(),
+  });
   try {
-    const BASE_URL = 'https://www.bing.com';
-    const { url } = req.query;
-    const browser = await puppeteer.launch({
-      args: [
-        '--disable-setuid-sandbox',
-        '--no-sandbox',
-        '--single-process',
-        '--no-zygote',
-      ],
-      headless: 'new',
-      executablePath:
-        process.env.NODE_ENV === 'production'
-          ? process.env.PUPPETEER_EXECUTABLE_PATH
-          : puppeteer.executablePath(),
-    });
     const page = await browser.newPage();
     await page.goto(BASE_URL + url);
     await page.waitForSelector('.imgContainer img.nofocus');
@@ -51,6 +51,9 @@ export async function getOriginalImageFromBing(req, res, next) {
       .status(200)
       .json({ success: true, image: `data:image/png;base64,${base64}` });
   } catch (err) {
-    next(err);
+    console.log(err);
+    res.status(500).json({ success: false, message: 'Web scraper error' });
+  } finally {
+    await browser.close();
   }
 }

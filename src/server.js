@@ -22,7 +22,7 @@ export async function getOriginalImageFromBing(req, res, next) {
       '--single-process',
       '--no-zygote',
     ],
-    // headless: 'new',
+    headless: 'true',
     executablePath:
       process.env.NODE_ENV === 'production'
         ? process.env.PUPPETEER_EXECUTABLE_PATH
@@ -31,7 +31,7 @@ export async function getOriginalImageFromBing(req, res, next) {
   try {
     const page = await browser.newPage();
     console.log(browser, page);
-    await page.goto(BASE_URL + url);
+    await page.goto(BASE_URL + url, { timeout: 120000 });
     console.log('Got the page');
     await page.waitForSelector('.imgContainer img.nofocus');
     await page.evaluate(() => {

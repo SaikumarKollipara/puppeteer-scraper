@@ -1,6 +1,5 @@
 import express from 'express';
 import puppeteer from 'puppeteer';
-import axios from 'axios';
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -12,7 +11,7 @@ app.get('/original-image', getOriginalImageFromBing);
 
 app.listen(PORT, () => `Server listening on port: ${PORT}`);
 
-export async function getOriginalImageFromBing(req, res, next) {
+export async function getOriginalImageFromBing(req, res) {
   const BASE_URL = 'https://www.bing.com';
   const { url } = req.query;
   const browser = await puppeteer.launch({
@@ -30,15 +29,8 @@ export async function getOriginalImageFromBing(req, res, next) {
   });
   try {
     const page = await browser.newPage();
-    await page.goto(BASE_URL + url, { timeout: 120000 });
-    await page.waitForSelector('.imgContainer img.nofocus');
-    await page.evaluate(() => {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve();
-        }, 2500);
-      });
-    });
+    await page.goto(BASE_URL + url, { timeout: 150000 });
+    await page.waitForSelector('.imgContainer img.nofocus', { timeout: 5000 });
 
     const imgSrc = await page.$eval(
       '.imgContainer img.nofocus',

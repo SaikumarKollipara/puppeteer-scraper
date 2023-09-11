@@ -28,14 +28,19 @@ export async function getOriginalImageFromBing(req, res) {
         : puppeteer.executablePath(),
   });
   try {
+    console.log('browser created');
     const page = await browser.newPage();
+    console.log('new page opened');
     await page.goto(BASE_URL + url, { timeout: 150000 });
+    console.log('got the page');
     await page.waitForSelector('.imgContainer img.nofocus', { timeout: 5000 });
+    console.log('got the selector');
 
     const imgSrc = await page.$eval(
       '.imgContainer img.nofocus',
       (img) => img.src
     );
+    console.log('image selected');
     res.status(200).json({ success: true, imgSrc });
   } catch (err) {
     console.log(err);
